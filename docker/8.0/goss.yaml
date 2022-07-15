@@ -1,0 +1,47 @@
+---
+command:
+  php-installed:
+    exec: "php --version"
+    exit-status: 0
+    stdout:
+      - "/8.0/"
+
+  php-installed-modules:
+    exec: "php --modules"
+    exit-status: 0
+    stdout:
+      - "/bcmath/"
+      - "/calendar/"
+      - "/ctype/"
+      - "/exif/"
+      - "/fileinfo/"
+      - "/gd/"
+      - "/intl/"
+      - "/json/"
+      - "/mbstring/"
+      - "/memcached/"
+      - "/OPcache/"
+      - "/openssl/"
+      - "/pcntl/"
+      - "/pdo/"
+      - "/pdo_mysql/"
+      - "/pdo_pgsql/"
+      - "/redis/"
+      - "/tokenizer/"
+      - "/xml/"
+      - "/xsl/"
+      - "/zip/"
+
+  test-php-iconv-support:
+    exec: php -d error_reporting=22527 -d display_errors=1 -r 'var_dump(iconv("UTF-8", "UTF-8//IGNORE", "This is the Euro symbol €"));'
+    exit-status: 0
+    stdout:
+      - string(27) "This is the Euro symbol €"
+
+file:
+  /opt/bootstrap:
+    exists: true
+    mode: "0755"
+  /opt/bootstrap.php:
+    exists: true
+    mode: "0755"
