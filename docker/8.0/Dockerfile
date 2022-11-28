@@ -78,10 +78,8 @@ RUN set -eux; \
     # ---
     # OPCache tweaks
     { \
-        echo "opcache.enable=1"; \
         echo "opcache.enable_cli=1"; \
         echo 'opcache.file_cache="/tmp/opcache"'; \
-        echo "opcache.validate_permission=0"; \
         echo "opcache.validate_timestamps=0"; \
         echo "opcache.memory_consumption=128"; \
         echo "opcache.max_accelerated_files=10000"; \
