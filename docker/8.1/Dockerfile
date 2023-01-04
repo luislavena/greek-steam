@@ -1,22 +1,20 @@
 # syntax = docker/dockerfile:1.3
 
 # ---
-# 1. Use Debian stable (11, bullseye) version of PHP
-FROM php:8.1.13-fpm-bullseye AS base
+# 1. Use Alpine Linux version of PHP
+FROM php:8.1.13-fpm-alpine AS base
 
 # ---
 # 2. Upgrade system and installed dependencies for security patches
-RUN --mount=type=cache,target=/var/cache/apt \
-    --mount=type=cache,target=/var/lib/apt \
+RUN --mount=type=cache,target=/var/cache/apk \
     --mount=type=tmpfs,target=/var/log \
     set -eux; \
-    apt-get update; \
-    apt-get upgrade -y
+    apk update; \
+    apk upgrade
 
 # ---
 # 3. Install PHP extensions
-RUN --mount=type=cache,target=/var/cache/apt \
-    --mount=type=cache,target=/var/lib/apt \
+RUN --mount=type=cache,target=/var/cache/apk \
     --mount=type=tmpfs,target=/var/log \
     set -eux; \
     # ---
