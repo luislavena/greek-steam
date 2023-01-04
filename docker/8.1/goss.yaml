@@ -27,6 +27,7 @@ command:
       - "/pdo_mysql/"
       - "/pdo_pgsql/"
       - "/redis/"
+      - "/sockets/"
       - "/tokenizer/"
       - "/xml/"
       - "/xsl/"
