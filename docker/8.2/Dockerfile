@@ -50,7 +50,7 @@ RUN --mount=type=cache,target=/var/cache/apt \
         pcntl \
         pdo_mysql \
         pdo_pgsql \
-        redis-stable \
+        redis-5.3.7 \
         sockets \
         xsl \
         zip \
