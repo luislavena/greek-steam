@@ -2,7 +2,7 @@
 
 # ---
 # 1. Use Debian stable (11, bullseye) version of PHP
-FROM php:8.1.22-fpm-bullseye AS base
+FROM php:8.1.26-fpm-bullseye AS base
 
 # ---
 # 2. Upgrade system and installed dependencies for security patches
