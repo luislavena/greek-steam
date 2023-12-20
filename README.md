@@ -51,7 +51,7 @@ Next, create a Dockerfile for that environment, following Vapor's conventions
 and naming the file `production.Dockerfile`:
 
 ```dockerfile
-FROM ghcr.io/luislavena/greek-steam:8.0
+FROM ghcr.io/luislavena/greek-steam:8.2
 
 # Place application in Lambda application directory...
 COPY . /var/task
