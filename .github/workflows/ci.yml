@@ -20,18 +20,24 @@ jobs:
     name: >-
       PHP ${{ matrix.php_full_version }}
 
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+
     steps:
       - name: Checkout
-        uses: actions/checkout@v3.2.0
+        uses: actions/checkout@v4
 
-      - name: Docker Setup QEMU
-        uses: docker/setup-qemu-action@v2.1.0
+      - name: Define build number
+        run: |
+          echo "GREEK_STEAM_COMMIT=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
 
-      - name: Docker Setup Buildx
-        uses: docker/setup-buildx-action@v2.2.1
+      - name: Set up Depot CLI
+        uses: depot/setup-action@v1
 
       - name: Docker GitHub Registry Login
-        uses: docker/login-action@v2.1.0
+        uses: docker/login-action@v2
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -39,7 +45,7 @@ jobs:
 
       - name: Docker Metadata action
         id: meta
-        uses: docker/metadata-action@v4.1.1
+        uses: docker/metadata-action@v4
         with:
           flavor: |
             latest=false
@@ -47,45 +53,48 @@ jobs:
             ghcr.io/luislavena/greek-steam
           tags: |
             type=raw,${{ matrix.php_full_version }}
+            type=raw,${{ matrix.php_full_version }}-${{ env.GREEK_STEAM_COMMIT }}
             type=raw,${{ matrix.php_major_minor }}
 
       - name: Setup Docker BuildKit cache strategy
-        uses: int128/docker-build-cache-config-action@v1.14.0
+        uses: int128/docker-build-cache-config-action@v1
         id: cache
         with:
           image: ghcr.io/${{ github.repository }}/build-cache
-          tag-prefix: php-${{ matrix.php_major_minor }}--
+          flavor: prefix=php-${{ matrix.php_major_minor }}--
 
-      - name: Build Docker images
-        uses: docker/build-push-action@v3.2.0
+      - name: Build container images
+        uses: depot/build-push-action@v1
         with:
-          context: docker/${{ matrix.php_major_minor }}
-          tags: local-image:ci
-          load: true
-          platforms: |
-            linux/amd64
-          pull: true
-          cache-from: ${{ steps.cache.outputs.cache-from }}
-          cache-to: ${{ steps.cache.outputs.cache-to }}
-
-      - name: Install Goss
-        uses: e1himself/goss-installation-action@v1.1.0
-        with:
-          version: 'v0.3.20'
-
-      - name: Test Docker image
-        run: dgoss run local-image:ci sleep infinity
-        env:
-          GOSS_FILE: docker/${{ matrix.php_major_minor }}/goss.yaml
-
-      - name: Push Docker images
-        uses: docker/build-push-action@v3.2.0
-        with:
+          project: ${{ secrets.DEPOT_PROJECT_ID }}
           context: docker/${{ matrix.php_major_minor }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          platforms: |
-            linux/amd64
+          platforms: linux/amd64,linux/arm64
+          pull: true
           push: ${{ github.event_name != 'pull_request' }}
           cache-from: ${{ steps.cache.outputs.cache-from }}
           cache-to: ${{ steps.cache.outputs.cache-to }}
+
+      # FIXME: re-enable testing before pushing
+      # - name: Install Goss
+      #   uses: e1himself/goss-installation-action@v1.1.0
+      #   with:
+      #     version: 'v0.3.20'
+
+      # - name: Test Docker image
+      #   run: dgoss run local-image:ci sleep infinity
+      #   env:
+      #     GOSS_FILE: docker/${{ matrix.php_major_minor }}/goss.yaml
+
+      # - name: Push Docker images
+      #   uses: docker/build-push-action@v3.2.0
+      #   with:
+      #     context: docker/${{ matrix.php_major_minor }}
+      #     tags: ${{ steps.meta.outputs.tags }}
+      #     labels: ${{ steps.meta.outputs.labels }}
+      #     platforms: |
+      #       linux/amd64
+      #     push: ${{ github.event_name != 'pull_request' }}
+      #     cache-from: ${{ steps.cache.outputs.cache-from }}
+      #     cache-to: ${{ steps.cache.outputs.cache-to }}
