@@ -27,6 +27,19 @@ Please note that this image does not contain any development tools like
 Composer, NodeJS or Yarn, as those should be used _before_ to generate the
 needed artifacts that will be integrated within the final image.
 
+## Support matrix
+
+This project will continuously build container images only for the supported
+versions listed below:
+
+| Status      | Versions |
+| ----------- | -------- |
+| Supported   | [![](https://img.shields.io/badge/8.5-green)][package-registry] [![](https://img.shields.io/badge/8.4-green)][package-registry] [![](https://img.shields.io/badge/8.3-green)][package-registry] [![](https://img.shields.io/badge/8.2-green)][package-registry] |
+| Unsupported | [![](https://img.shields.io/badge/8.1-red)][package-registry] [![](https://img.shields.io/badge/8.0-red)][package-registry] |
+
+Note that unsupported means no new builds will be produced for these versions
+as those might have reached EOL (End Of Life) support by PHP developers.
+
 ## Requirements
 
 You will need a working installation of [Docker][docker] on your machine or
@@ -51,7 +64,7 @@ Next, create a Dockerfile for that environment, following Vapor's conventions
 and naming the file `production.Dockerfile`:
 
 ```dockerfile
-FROM ghcr.io/luislavena/greek-steam:8.2
+FROM ghcr.io/luislavena/greek-steam:8.5
 
 # Place application in Lambda application directory...
 COPY . /var/task
@@ -78,3 +91,4 @@ request or discuss.
 [new-issue]: https://github.com/luislavena/greek-steam/issues/new
 [docker]: https://docs.docker.com/get-docker/
 [vapor-docker-runtime]: https://docs.vapor.build/1.0/projects/environments.html#runtime
+[package-registry]: https://github.com/luislavena/greek-steam/pkgs/container/greek-steam
