@@ -1,13 +1,16 @@
-# syntax = docker/dockerfile:1.4
+# syntax = docker/dockerfile:1
+
+ARG PHP_VERSION=8.2.34
+ARG BASE_DISTRO=trixie
 
 # ---
-# 1. Use Debian stable (11, bullseye) version of PHP
-FROM php:8.2.25-fpm-bullseye AS base
+# 1. Use Debian (${BASE_DISTRO}) version of PHP
+FROM php:${PHP_VERSION}-fpm-${BASE_DISTRO} AS base
 
 # ---
 # 2. Upgrade system and installed dependencies for security patches
-RUN --mount=type=cache,target=/var/cache/apt \
-    --mount=type=cache,target=/var/lib/apt \
+RUN --mount=type=cache,sharing=private,target=/var/cache/apt \
+    --mount=type=cache,sharing=private,target=/var/lib/apt \
     --mount=type=tmpfs,target=/var/log \
     set -eux; \
     apt-get update; \
@@ -15,8 +18,8 @@ RUN --mount=type=cache,target=/var/cache/apt \
 
 # ---
 # 3. Install PHP extensions
-RUN --mount=type=cache,target=/var/cache/apt \
-    --mount=type=cache,target=/var/lib/apt \
+RUN --mount=type=cache,sharing=private,target=/var/cache/apt \
+    --mount=type=cache,sharing=private,target=/var/lib/apt \
     --mount=type=tmpfs,target=/var/log \
     set -eux; \
     # ---
@@ -25,8 +28,8 @@ RUN --mount=type=cache,target=/var/cache/apt \
     #
     # Ref: https://github.com/mlocati/docker-php-extension-installer
     export \
-        PHP_EXT_INSTALLER_VERSION=2.6.1 \
-        PHP_EXT_INSTALLER_SHA256SUM=041f9a66451dece1800e1f0990a08b2c07fdce11e9788001fde065ba8d77d2f1 \
+        PHP_EXT_INSTALLER_VERSION=2.12.3 \
+        PHP_EXT_INSTALLER_SHA256SUM=9c26dd516b8147235c4e924c52e2f076fb2b3f278f5457e88918518ebfee9e01 \
         IPE_GD_WITHOUTAVIF=1 \
     ; \
     cd /tmp; \
@@ -50,7 +53,7 @@ RUN --mount=type=cache,target=/var/cache/apt \
         pcntl \
         pdo_mysql \
         pdo_pgsql \
-        redis-5.3.7 \
+        redis-stable \
         sockets \
         xsl \
         zip \
