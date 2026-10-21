@@ -39,6 +39,12 @@ command:
     stdout:
       - string(27) "This is the Euro symbol €"
 
+  php-hardening-ini:
+    exec: php -r 'echo ini_get("session.upload_progress.enabled"), "|", ini_get("session.use_strict_mode");'
+    exit-status: 0
+    stdout:
+      - "0|1"
+
 file:
   /opt/bootstrap:
     exists: true
