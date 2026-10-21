@@ -66,8 +66,7 @@ jobs:
               ENTRY=$(jq -c --arg v "$DIR" '{
                 php_major_minor: $v,
                 php_full: .[$v].php_full,
-                base_distro: .[$v].base_distro,
-                concurrency_group: "build-php"
+                base_distro: .[$v].base_distro
               }' "$VERSIONS_FILE")
               MATRIX_INCLUDE=$(echo "$MATRIX_INCLUDE" | jq -c --argjson e "$ENTRY" '. + [$e]')
             fi
@@ -86,6 +85,9 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
+      # Build one version at a time. A shared concurrency group cancels
+      # pending jobs when more than two versions build in one run.
+      max-parallel: 1
       matrix: ${{ fromJSON(needs.detect-changes.outputs.matrix) }}
 
     name: >-
@@ -97,7 +99,7 @@ jobs:
       id-token: write
 
     concurrency:
-      group: ${{ matrix.concurrency_group || format('{0}-{1}', github.run_id, matrix.php_full) }}
+      group: build-php-${{ matrix.php_major_minor }}
 
     steps:
       - name: Checkout
