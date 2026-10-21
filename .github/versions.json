@@ -1,0 +1,18 @@
+{
+  "8.2": {
+    "php_full": "8.2.34",
+    "base_distro": "trixie"
+  },
+  "8.3": {
+    "php_full": "8.3.35",
+    "base_distro": "trixie"
+  },
+  "8.4": {
+    "php_full": "8.4.26",
+    "base_distro": "trixie"
+  },
+  "8.5": {
+    "php_full": "8.5.11",
+    "base_distro": "trixie"
+  }
+}
