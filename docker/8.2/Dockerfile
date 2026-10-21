@@ -87,7 +87,16 @@ RUN set -eux; \
         echo "opcache.validate_timestamps=0"; \
         echo "opcache.memory_consumption=128"; \
         echo "opcache.max_accelerated_files=10000"; \
-    } | tee "${PHP_INI_DIR}/conf.d/20-opcache.ini"
+    } | tee "${PHP_INI_DIR}/conf.d/20-opcache.ini"; \
+    # ---
+    # Hardening: do not let upload progress write client-supplied names
+    # into session files, and refuse session IDs PHP did not create
+    #
+    # Ref: https://www.php.net/manual/en/session.configuration.php
+    { \
+        echo "session.upload_progress.enabled=0"; \
+        echo "session.use_strict_mode=1"; \
+    } | tee "${PHP_INI_DIR}/conf.d/30-hardening.ini"
 
 # ---
 # 5. Vapor bootstrap scripts and entrypoint
